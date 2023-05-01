@@ -1,14 +1,14 @@
 import { ApolloServer, gql } from "apollo-server";
 
-const tweets = [
+let tweets = [
 	{
 		id: "1",
-		text: "first one!"
+		text: "first one!",
 	},
 	{
 		id: "2",
-		text: "second one"
-	}
+		text: "second one",
+	},
 ];
 
 //grapql SDL : Schema definition language
@@ -42,8 +42,24 @@ const resolvers = {
 		tweet(root, { id }) {
 			// 두 번째는 query나 mutation 에서 유저가 보낸 argument가 됨
 			return tweets.find((tweet) => tweet.id === id);
-		}
-	}
+		},
+	},
+	Mutation: {
+		postTweet(root, { text, userId }) {
+			const newTweet = {
+				id: tweets.length + 1,
+				text,
+			};
+			tweets.push(newTweet);
+			return newTweet;
+		},
+		deleteTweet(root, { id }) {
+			const tweet = tweets.find((tweet) => tweet.id === id);
+			if (!tweet) return false;
+			tweets = tweets.filter((tweet) => tweet.id !== id);
+			return true;
+		},
+	},
 };
 
 const server = new ApolloServer({ typeDefs, resolvers });
