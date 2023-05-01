@@ -32,8 +32,14 @@ const typeDefs = gql`
 		id: ID!
 		firstName: String!
 		lastName: String!
+		"""
+		Is the sum of firstName+lastName  as a string
+		"""
 		fullName: String!
 	}
+	"""
+	Tweet object represents a resource fora Tweet
+	"""
 	type Tweet {
 		id: ID!
 		text: String!
@@ -46,6 +52,9 @@ const typeDefs = gql`
 	}
 	type Mutation {
 		postTweet(text: String!, userId: ID!): Tweet!
+		"""
+		Deletes a Tweet if found, else return false
+		"""
 		deleteTweet(id: ID): Boolean!
 	}
 `;
@@ -69,7 +78,9 @@ const resolvers = {
 			const newTweet = {
 				id: tweets.length + 1,
 				text,
+				userId,
 			};
+
 			tweets.push(newTweet);
 			return newTweet;
 		},
@@ -97,3 +108,7 @@ const server = new ApolloServer({ typeDefs, resolvers });
 server.listen().then(({ url }) => {
 	console.log(`Runnig on ${url}`);
 });
+
+/*
+user database에 userId가 없는지를 체크
+*/
