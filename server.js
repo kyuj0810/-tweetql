@@ -11,13 +11,26 @@ let tweets = [
 	},
 ];
 
+let users = [
+	{
+		id: "1",
+		firstName: "kim",
+		lastName: "jin",
+	},
+	{
+		id: "2",
+		firstName: "elon",
+		lastName: "bin",
+	},
+];
+
 //grapql SDL : Schema definition language
 const typeDefs = gql`
 	type User {
 		id: ID!
-		username: String!
-		firstname: String!
+		firstName: String!
 		lastName: String!
+		fullName: String!
 	}
 	type Tweet {
 		id: ID!
@@ -25,6 +38,7 @@ const typeDefs = gql`
 		author: User
 	}
 	type Query {
+		allUsers: [User]
 		allTweets: [Tweet!]!
 		tweet(id: ID!): Tweet
 	}
@@ -43,6 +57,10 @@ const resolvers = {
 			// 두 번째는 query나 mutation 에서 유저가 보낸 argument가 됨
 			return tweets.find((tweet) => tweet.id === id);
 		},
+		allUsers() {
+			console.log("allUsers called");
+			return users;
+		},
 	},
 	Mutation: {
 		postTweet(root, { text, userId }) {
@@ -58,6 +76,11 @@ const resolvers = {
 			if (!tweet) return false;
 			tweets = tweets.filter((tweet) => tweet.id !== id);
 			return true;
+		},
+	},
+	User: {
+		fullName({ firstName, lastName }) {
+			return `${firstName} ${lastName}`;
 		},
 	},
 };
